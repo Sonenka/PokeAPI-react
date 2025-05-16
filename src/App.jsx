@@ -13,16 +13,17 @@ import './styles/index.css';
 import './styles/pagination.css';
 
 const POKEMONS_PER_PAGE = 12;
-const MAX_RETRIES = 3;
+const MAX_POKEMONS = 2000; // Максимальное количество покемонов
 
 const App = () => {
-  const [pokemons, setPokemons] = useState([]);
-  const [pokemonDetails, setPokemonDetails] = useState([]);
+  const [pokemons, setPokemons] = useState([]); // Все покемоны (первые 2000)
+  const [pokemonDetails, setPokemonDetails] = useState({});
   const [types, setTypes] = useState([]);
-  const [filtered, setFiltered] = useState([]);
+  const [filteredPokemons, setFilteredPokemons] = useState([]);
+  const [currentPagePokemons, setCurrentPagePokemons] = useState([]);
   const [search, setSearch] = useState('');
   const [selectedType, setSelectedType] = useState('');
-  const [sortOrder, setSortOrder] = useState('asc');
+  const [sortOrder, setSortOrder] = useState('id-asc');
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,17 +35,18 @@ const App = () => {
         setIsLoading(true);
         setError(null);
         
-        const [allPokemons, allTypes] = await Promise.all([
-          fetchPokemonList(1000), // Уменьшил лимит для теста
+        // Загружаем только покемонов с ID ≤ 2000
+        const [filteredPokemons, allTypes] = await Promise.all([
+          fetchPokemonList(), // Убрали параметр limit, так как теперь фильтрация внутри функции
           fetchPokemonTypes()
         ]);
         
-        setPokemons(allPokemons);
+        setPokemons(filteredPokemons);
         setTypes(allTypes);
-        setFiltered(allPokemons);
+        setFilteredPokemons(filteredPokemons);
         
         // Загружаем детали для первой страницы
-        await loadPokemonDetails(allPokemons.slice(0, POKEMONS_PER_PAGE));
+        await loadPokemonDetails(filteredPokemons.slice(0, POKEMONS_PER_PAGE));
       } catch (err) {
         console.error("Error initializing app:", err);
         setError({
@@ -64,11 +66,30 @@ const App = () => {
       setIsLoading(true);
       setLoadedImages(0);
       
-      const details = await Promise.all(
-        pokemonsToLoad.map(pokemon => fetchPokemonDetails(pokemon.id))
-      );
+      const newDetails = {};
+      const detailsToLoad = [];
       
-      setPokemonDetails(details.filter(Boolean));
+      // Проверяем, какие покемоны еще не загружены
+      pokemonsToLoad.forEach(p => {
+        if (!pokemonDetails[p.id]) {
+          detailsToLoad.push(fetchPokemonDetails(p.id));
+        }
+      });
+      
+      // Загружаем только недостающие детали
+      if (detailsToLoad.length > 0) {
+        const loadedDetails = await Promise.all(detailsToLoad);
+        loadedDetails.forEach(detail => {
+          if (detail) newDetails[detail.id] = detail;
+        });
+      }
+      
+      // Обновляем состояние
+      if (Object.keys(newDetails).length > 0) {
+        setPokemonDetails(prev => ({ ...prev, ...newDetails }));
+      }
+      
+      setCurrentPagePokemons(pokemonsToLoad);
     } catch (err) {
       console.error("Error loading pokemon details:", err);
       setError({
@@ -85,45 +106,57 @@ const App = () => {
   }, [pokemons, search, selectedType, sortOrder]);
 
   const applyFilters = () => {
-    let filteredList = [...pokemons];
+    let filteredList = [...pokemons]; // Работаем только с первыми 2000 покемонами
 
+    // Поиск по имени
     if (search) {
       filteredList = filteredList.filter(p =>
         p.name.toLowerCase().includes(search.toLowerCase())
       );
     }
 
+    // Фильтрация по типу
     if (selectedType) {
-      filteredList = filteredList.filter(p =>
-        pokemonDetails.find(d => d?.id === p.id)?.types.includes(selectedType)
-      );
+      filteredList = filteredList.filter(p => {
+        const details = pokemonDetails[p.id];
+        return details?.types?.includes(selectedType);
+      });
     }
 
-    filteredList.sort((a, b) => 
-      sortOrder === 'asc' 
-        ? a.name.localeCompare(b.name) 
-        : b.name.localeCompare(a.name)
-    );
+    // Сортировка
+    filteredList.sort((a, b) => {
+      switch (sortOrder) {
+        case 'id-asc': return a.id - b.id;
+        case 'id-desc': return b.id - a.id;
+        case 'name-asc': return a.name.localeCompare(b.name);
+        case 'name-desc': return b.name.localeCompare(a.name);
+        default: return a.id - b.id;
+      }
+    });
 
-    setFiltered(filteredList);
+    setFilteredPokemons(filteredList);
     setCurrentPage(1);
+    
+    // Загружаем детали для первой страницы
+    if (filteredList.length > 0) {
+      loadPokemonDetails(filteredList.slice(0, POKEMONS_PER_PAGE));
+    } else {
+      setCurrentPagePokemons([]);
+    }
   };
 
   const handlePageChange = async (page) => {
     setCurrentPage(page);
     const startIndex = (page - 1) * POKEMONS_PER_PAGE;
     const endIndex = startIndex + POKEMONS_PER_PAGE;
-    await loadPokemonDetails(filtered.slice(startIndex, endIndex));
+    await loadPokemonDetails(filteredPokemons.slice(startIndex, endIndex));
   };
 
   const handleImageLoad = () => {
     setLoadedImages(prev => prev + 1);
   };
 
-  const indexOfLast = currentPage * POKEMONS_PER_PAGE;
-  const indexOfFirst = indexOfLast - POKEMONS_PER_PAGE;
-  const currentPokemons = filtered.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(filtered.length / POKEMONS_PER_PAGE);
+  const totalPages = Math.ceil(filteredPokemons.length / POKEMONS_PER_PAGE);
 
   return (
     <div className="container">
@@ -148,24 +181,24 @@ const App = () => {
         <>
           <div 
             className="list-wrapper"
-            style={{ opacity: loadedImages >= currentPokemons.length ? 1 : 0.5 }}
+            style={{ opacity: loadedImages >= currentPagePokemons.length ? 1 : 0.5 }}
           >
-            {filtered.length === 0 ? (
+            {filteredPokemons.length === 0 ? (
               <div className="no-results">No Pokémon found</div>
             ) : (
-              currentPokemons.map((pokemon, index) => (
+              currentPagePokemons.map((pokemon) => (
                 <PokemonCard 
                   key={`${pokemon.id}-${currentPage}`}
-                  pokemon={pokemonDetails[index]} 
+                  pokemon={pokemonDetails[pokemon.id]} 
                   onImageLoad={handleImageLoad}
                 />
               ))
             )}
           </div>
           
-          {filtered.length > POKEMONS_PER_PAGE && (
+          {filteredPokemons.length > POKEMONS_PER_PAGE && (
             <Pagination
-              total={filtered.length}
+              total={filteredPokemons.length}
               perPage={POKEMONS_PER_PAGE}
               currentPage={currentPage}
               totalPages={totalPages}

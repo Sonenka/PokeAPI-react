@@ -13,14 +13,26 @@ const fetchWithRetry = async (url, retries = 3, delay = 1000) => {
   }
 };
 
-export const fetchPokemonList = async (limit = 10000) => {
+export const fetchPokemonList = async () => {
   try {
-    const data = await fetchWithRetry(`${POKEAPI_BASE}/pokemon?limit=${limit}`);
-    return data.results.map(pokemon => ({
-      ...pokemon,
-      id: parseInt(pokemon.url.split('/').filter(Boolean).pop()),
-      types: []
-    }));
+    // Сначала получаем общее количество покемонов
+    const initialData = await fetchWithRetry(`${POKEAPI_BASE}/pokemon?limit=1`);
+    const totalCount = initialData.count;
+    
+    // Затем загружаем все покемоны (но фильтруем только ID ≤ 2000)
+    const allData = await fetchWithRetry(`${POKEAPI_BASE}/pokemon?limit=${totalCount}`);
+    
+    // Фильтруем только покемонов с ID ≤ 2000
+    return allData.results
+      .map(pokemon => {
+        const id = parseInt(pokemon.url.split('/').filter(Boolean).pop());
+        return {
+          ...pokemon,
+          id,
+          types: []
+        };
+      })
+      .filter(pokemon => pokemon.id <= 2000);
   } catch (error) {
     console.error('Error fetching pokemon list:', error);
     throw error;
