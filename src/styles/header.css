@@ -1,0 +1,100 @@
+.search {
+    height: var(--search-pagination-height);
+    padding: 15px 40px;
+    gap: 10px;
+    display: flex;
+    align-items: center;
+}
+
+/* Элемент поиска */
+.search-container {
+    position: relative;
+    width: 100%;
+}
+
+.search__input {
+    padding: 12px 16px;
+    border-radius: 48px;
+    background-color: var(--white);
+    border: none;
+    outline: none;
+    font-size: 16px;
+    width: 97%;
+}
+
+.search__input:focus,
+.search__input:active {
+    outline: 2px solid var(--blue);
+}
+
+.search__clear {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: var(--red);
+    cursor: pointer;
+    display: none;
+}
+
+.search__input:not(:placeholder-shown) + .search__clear {
+    display: block; /* Показываем крестик, когда есть текст в поле */
+}
+
+.no-results {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--blue);
+}
+
+.dropdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+.dropdown__label {
+    font-size: 16px;
+    color: white;
+    text-wrap: nowrap;
+}
+
+.dropdown__select {
+    font-size: 16px;
+    padding: 12px 36px 12px 16px;
+    border-radius: 48px;
+    background-color: var(--white);
+    border: none;
+    outline: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    color: #555;
+}
+
+.dropdown__container::after {
+    content: '\25BC';
+    position: absolute;
+    transform: translateY(-50%);
+    top: 54%;
+    right: 12px;
+    cursor:pointer;
+    pointer-events:none;
+    transition: .25s all ease;
+    color: var(--red);
+}
+
+.dropdown__option {
+    font-family: "Nunito", sans-serif;
+}
+
+.dropdown__option:active {
+    background-color: red;
+}

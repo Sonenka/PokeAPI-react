@@ -1,0 +1,132 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+
+    background-color: var(--white);
+    border-radius: 15px;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 8px var(--color-shadow);
+
+    padding: 20px;
+    text-align: center;
+
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+
+    width: 100%;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px var(--color-shadow-hover);
+}
+
+/* Card Image */
+.card__img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px;
+    background-image: url('../assets/img/pokeball.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+}
+
+.card:hover .card__img {
+    background-image: url('../assets/img/pokeballHover.svg');
+    transition: all 0.3s ease;
+}
+
+.card__img img {
+    width: 70%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    /* opacity: 0; */
+    display: block;
+}
+
+.card__img img.loaded {
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+.card:hover .card__img img {
+    transform: scale(1.1);  
+}
+
+/* Card Content Elements */
+.card__id,
+.card__name,
+.card__types {
+    width: 100%;
+    flex-shrink: 0; 
+}
+
+.card__id {
+    background-color: #ff3e4e;
+    width: min-content;
+    color: #FFFFFF;
+    padding: 5px 10px;
+    border-radius: 100px;
+}
+
+.card__name {
+    color: var(--blue);
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.card__types {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.card__type {
+    width: calc(50% - 10px);
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    border-radius: 30px;
+    color: var(--white);
+    text-transform: capitalize;
+
+    transition: all 200ms;
+    padding: 10px;
+}
+
+.card__type img {
+    height: 18px;
+    aspect-ratio: 1 / 1;
+}
+
+/* Pokemon Type Classes */
+/* .bug { background: var(--type-bug); }
+.dark { background: var(--type-dark); }
+.dragon { background: var(--type-dragon); }
+.electric { background: var(--type-electric); }
+.fire { background: var(--type-fire); }
+.fairy { background: var(--type-fairy); }
+.fighting { background: var(--type-fighting); }
+.flying { background: var(--type-flying); }
+.ghost { background: var(--type-ghost); }
+.grass { background: var(--type-grass); }
+.ground { background: var(--type-ground); }
+.ice { background: var(--type-ice); }
+.normal { background: var(--type-normal); }
+.poison { background: var(--type-poison); }
+.psychic { background: var(--type-psychic); }
+.rock { background: var(--type-rock); }
+.steel { background: var(--type-steel); }
+.water { background: var(--type-water); } */
