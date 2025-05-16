@@ -112,7 +112,7 @@
 }
 
 /* Pokemon Type Classes */
-/* .bug { background: var(--type-bug); }
+.bug { background: var(--type-bug); }
 .dark { background: var(--type-dark); }
 .dragon { background: var(--type-dragon); }
 .electric { background: var(--type-electric); }
@@ -129,4 +129,4 @@
 .psychic { background: var(--type-psychic); }
 .rock { background: var(--type-rock); }
 .steel { background: var(--type-steel); }
-.water { background: var(--type-water); } */
+.water { background: var(--type-water); }
