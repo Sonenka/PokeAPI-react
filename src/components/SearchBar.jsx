@@ -1,4 +1,8 @@
 function SearchBar({ value, onChange }) {
+  const handleClear = () => {
+    onChange(''); // Очищаем значение поиска
+  };
+
   return (
     <div className="search-container">
       <input
@@ -6,10 +10,16 @@ function SearchBar({ value, onChange }) {
         type="text"
         placeholder="Search Pokémon..."
         value={value}
-        onChange={(e) => onChange(e.target.value)
-        }
+        onChange={(e) => onChange(e.target.value)}
       />
-      <span className="search__clear" id="search__clear">&#10006;</span>
+      {value && ( // Показываем крестик только если есть текст
+        <span 
+          className="search__clear" 
+          onClick={handleClear}
+        >
+          &#10006;
+        </span>
+      )}
     </div>
   );
 }
