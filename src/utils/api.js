@@ -56,14 +56,31 @@ export const fetchPokemonDetails = async (id) => {
       id: data.id,
       name: data.name,
       types: data.types.map(t => t.type.name),
+      height: data.height,
+      weight: data.weight,
       sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${id}.png`,
       stats: data.stats.map(stat => ({
         name: stat.stat.name,
         value: stat.base_stat
+      })),
+      abilities: data.abilities.map(ability => ({
+        name: ability.ability.name,
+        is_hidden: ability.is_hidden
       }))
     };
   } catch (error) {
     console.error(`Error fetching details for pokemon ${id}:`, error);
     return null;
+  }
+};
+
+export const fetchPokemonSpeciesData = async (id) => {
+  try {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}/`);
+    console.log(response);
+    return await response.json();
+  } catch (error) {
+    console.error(`Failed to fetch Pokemon species data for ID ${id}:`, error);
+    return { color: { name: 'blue' } }; // Fallback color
   }
 };

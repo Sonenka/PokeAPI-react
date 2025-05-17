@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import { fetchPokemonList, fetchPokemonTypes, fetchPokemonDetails } from './utils/api';
 import PokemonCard from './components/PokemonCard';
 import Pagination from './components/Pagination';
 import Header from './components/Header';
 import Loader from './components/Loader';
 import ErrorMessage from './components/ErrorMessage';
+import PokemonDetails from './components/PokemonDetails';
 
 import './styles/variables.css';
 import './styles/header.css';
 import './styles/card.css';
 import './styles/index.css';
 import './styles/pagination.css';
+// import './styles/details.css';
 
 const POKEMONS_PER_PAGE = 12;
-const MAX_POKEMONS = 2000; // Максимальное количество покемонов
+const MAX_POKEMONS = 2000;
 
-const App = () => {
-  const [pokemons, setPokemons] = useState([]); // Все покемоны (первые 2000)
+const PokedexPage = () => {
+  const [pokemons, setPokemons] = useState([]);
   const [pokemonDetails, setPokemonDetails] = useState({});
   const [types, setTypes] = useState([]);
   const [filteredPokemons, setFilteredPokemons] = useState([]);
@@ -28,7 +31,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [loadedImages, setLoadedImages] = useState(0);
-  const [typeFilterReady, setTypeFilterReady] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const initApp = async () => {
@@ -36,33 +39,14 @@ const App = () => {
         setIsLoading(true);
         setError(null);
         
-        // Загружаем первые 2000 покемонов
-        const allPokemons = await fetchPokemonList();
+        const allPokemons = await fetchPokemonList(MAX_POKEMONS);
         const allTypes = await fetchPokemonTypes();
         
-        // Загружаем детали для всех покемонов (пачками)
-        const pokemonDetails = {};
-        const batchSize = 50;
-        
-        for (let i = 0; i < allPokemons.length; i += batchSize) {
-          const batch = allPokemons.slice(i, i + batchSize);
-          const details = await Promise.all(
-            batch.map(p => fetchPokemonDetails(p.id))
-          );
-          
-          details.forEach(detail => {
-            if (detail) pokemonDetails[detail.id] = detail;
-          });
-        }
-        
         setPokemons(allPokemons);
-        setPokemonDetails(pokemonDetails);
         setTypes(allTypes);
         setFilteredPokemons(allPokemons);
-        setTypeFilterReady(true);
         
-        // Отображаем первую страницу
-        setCurrentPagePokemons(allPokemons.slice(0, POKEMONS_PER_PAGE));
+        await loadPokemonDetails(allPokemons.slice(0, POKEMONS_PER_PAGE));
       } catch (err) {
         console.error("Error initializing app:", err);
         setError({
@@ -85,14 +69,12 @@ const App = () => {
       const newDetails = {};
       const detailsToLoad = [];
       
-      // Проверяем, какие покемоны еще не загружены
       pokemonsToLoad.forEach(p => {
         if (!pokemonDetails[p.id]) {
           detailsToLoad.push(fetchPokemonDetails(p.id));
         }
       });
       
-      // Загружаем только недостающие детали
       if (detailsToLoad.length > 0) {
         const loadedDetails = await Promise.all(detailsToLoad);
         loadedDetails.forEach(detail => {
@@ -100,7 +82,6 @@ const App = () => {
         });
       }
       
-      // Обновляем состояние
       if (Object.keys(newDetails).length > 0) {
         setPokemonDetails(prev => ({ ...prev, ...newDetails }));
       }
@@ -118,15 +99,12 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (typeFilterReady) {
-      applyFilters();
-    }
-  }, [pokemons, search, selectedType, sortOrder, typeFilterReady]);
+    applyFilters();
+  }, [pokemons, search, selectedType, sortOrder]);
 
   const applyFilters = () => {
     let filteredList = [...pokemons];
-  
-    // Поиск по имени или ID
+
     if (search) {
       const searchTerm = search.toLowerCase().trim();
       const searchAsNumber = parseInt(searchTerm);
@@ -138,16 +116,14 @@ const App = () => {
         return nameMatch || idMatch;
       });
     }
-  
-    // Фильтрация по типу
+
     if (selectedType) {
       filteredList = filteredList.filter(p => {
         const details = pokemonDetails[p.id];
         return details?.types?.includes(selectedType);
       });
     }
-  
-    // Сортировка
+
     filteredList.sort((a, b) => {
       switch (sortOrder) {
         case 'id-asc': return a.id - b.id;
@@ -157,12 +133,15 @@ const App = () => {
         default: return a.id - b.id;
       }
     });
-  
+
     setFilteredPokemons(filteredList);
     setCurrentPage(1);
     
-    // Обновляем отображаемые покемоны
-    setCurrentPagePokemons(filteredList.slice(0, POKEMONS_PER_PAGE));
+    if (filteredList.length > 0) {
+      loadPokemonDetails(filteredList.slice(0, POKEMONS_PER_PAGE));
+    } else {
+      setCurrentPagePokemons([]);
+    }
   };
 
   const handlePageChange = async (page) => {
@@ -174,6 +153,16 @@ const App = () => {
 
   const handleImageLoad = () => {
     setLoadedImages(prev => prev + 1);
+  };
+
+  const handlePokemonClick = (pokemonId) => {
+    localStorage.setItem('pokedexState', JSON.stringify({
+      search,
+      selectedType,
+      sortOrder,
+      currentPage
+    }));
+    navigate(`/pokemon/${pokemonId}`);
   };
 
   const totalPages = Math.ceil(filteredPokemons.length / POKEMONS_PER_PAGE);
@@ -211,6 +200,7 @@ const App = () => {
                   key={`${pokemon.id}-${currentPage}`}
                   pokemon={pokemonDetails[pokemon.id]} 
                   onImageLoad={handleImageLoad}
+                  onClick={() => handlePokemonClick(pokemon.id)}
                 />
               ))
             )}
@@ -228,6 +218,18 @@ const App = () => {
         </>
       )}
     </div>
+  );
+};
+
+const App = () => {
+  return (
+    <Router basename="/PokeAPI-react">
+      <Routes>
+        <Route path="/" element={<PokedexPage />} />
+        <Route path="/pokemon/:id" element={<PokemonDetails />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
   );
 };
 

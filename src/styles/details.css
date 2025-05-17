@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200..1000&display=swap');
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.page {
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    height: auto;
+} 
+
+.details {
+    max-width: 800px;
+    height: min-content;
+    /* max-height: 800px; */
+    margin: auto auto;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    position: relative;
+    z-index: 1;
+}
+
+.details__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.details__back-button {
+    background: var(--pokemon-color, #FF696F);
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.details__back-img {
+    height: 36px;
+}
+
+.details__back-button:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+.details__title {
+    font-size: 48px;
+}
+
+.details__id {
+    background: var(--pokemon-color, #FF696F);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 32px;
+}
+
+.details__main {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 40px;
+}
+
+.details__image-container {
+    text-align: center;
+}
+
+.details__image {
+    width: 100%;
+    height: auto;
+}
+
+.details__types {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.details__type {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 15px;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.details__info {
+    margin-bottom: 30px;
+}
+
+.details__subtitle {
+    border-bottom: 2px solid var(--pokemon-color, #FF696F);
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    color: var(--pokemon-color, #FF696F);
+}
+
+.details__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.details__info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.details__flavor-text {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--text-color);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    text-align: center;
+    font-style: italic;
+}
+
+.details__value {
+    margin-bottom: 5px;
+}
+
+.details__label {
+    text-transform: capitalize;
+    margin-bottom: 5px;
+}
+
+.details__stat {
+    margin-bottom: 12px;
+}
+
+.details__stat-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.details__stat-bar {
+    height: 20px;
+    background: var(--pokemon-color, #FF696F);
+    border-radius: 5px;
+    transition: width 0.5s ease-out;
+}
+
+.details__stat-value {
+    min-width: 30px;
+    text-align: right;
+}
+
+.details__stat-name {
+    margin-bottom: 5px;
+    text-transform: capitalize;
+}
+
+.details__abilities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.details__ability {
+    background: #ffffff;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.details__ability--hidden {
+    color: var(--pokemon-color, #FF696F);
+    font-size: 0.8em;
+    margin-left: 5px;
+}
+
+@media (max-width: 768px) {
+    .details {
+        padding: 15px;
+    }
+
+    .details__header {
+        gap: 10px;
+    }
+
+    .details__main {
+        grid-template-columns: 1fr;
+    }
+    
+    .details__image {
+        max-width: 200px;
+    }
+
+    .details__back-button {
+        padding: 2px 5px;
+        border-radius: 5px;
+    }
+    
+    .details__back-img {
+        height: 16px;
+    }
+
+    .details__title {
+        font-size: 24px;
+    }
+    
+    .details__id {
+        padding: 2px 5px;
+        font-size: 16px;
+    }
+    
+}

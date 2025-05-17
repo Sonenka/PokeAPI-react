@@ -1,26 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
+// import './card.css';
 
-const PokemonCard = ({ pokemon, onImageLoad }) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
-
+const PokemonCard = ({ pokemon, onImageLoad, onClick }) => {
   if (!pokemon) return null;
 
-  const handleLoad = () => {
-    setImageLoaded(true);
-    onImageLoad();
-  };
-
   return (
-    <div className="card">
+    <div className="card" onClick={() => onClick(pokemon.id)}>
       <div className="card__id">#{pokemon.id.toString().padStart(4, '0')}</div>
       <div className="card__img">
-        {!imageLoaded && <div className="card__img-placeholder"></div>}
-        <img
-          src={pokemon.sprite}
+        <img 
+          src={pokemon.sprite} 
           alt={pokemon.name}
-          onLoad={handleLoad}
-          onError={handleLoad} // В случае ошибки тоже считаем загрузку завершенной
-          style={{ display: imageLoaded ? 'block' : 'none' }}
+          onLoad={onImageLoad}
         />
       </div>
       <div className="card__name">
