@@ -9,6 +9,7 @@
     --color-shadow: rgba(0, 0, 0, 0.1);
     --color-shadow-hover: rgba(0, 0, 0, 0.15);
     --color-border: #eee;
+    --pokemon-color: #ff3e4e;
     
     /* Pokemon type colors */
     --type-bug: #92BC2C;

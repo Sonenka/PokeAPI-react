@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchPokemonDetails, fetchPokemonSpeciesData } from '../utils/api';
 import '../styles/details.css';
+import '../styles/variables.css';
+import useLoader from '../state/useLoader';
 
 // Константы
 const FALLBACK_COLOR = 'blue';
@@ -16,6 +18,7 @@ const MAX_STATS_VALUES = {
 };
 
 const PokemonDetails = () => {
+  const { LoaderComponent, toggleLoader } = useLoader();
   const { id } = useParams();
   const navigate = useNavigate();
   const [pokemon, setPokemon] = useState(null);
@@ -25,6 +28,7 @@ const PokemonDetails = () => {
 
   useEffect(() => {
     const loadData = async () => {
+        toggleLoader(true); 
       try {
         setIsLoading(true);
         setError(null);
@@ -38,22 +42,19 @@ const PokemonDetails = () => {
         if (!pokemonData || !speciesData) {
           throw new Error('Failed to load Pokémon data');
         }
-        console.log(11, pokemonData);
         // Объединение данных из двух источников
         const combinedData = {
           ...pokemonData,
           height: pokemonData.height || 0,
           weight: pokemonData.weight || 0,
-          abilities: pokemonData.abilities?.map(ability => ({
-            ability: { name: ability.ability?.name || 'unknown' },
+          abilities: pokemonData.abilities.map(ability => ({
+            ability: { name: ability.name },
             is_hidden: ability.is_hidden || false
           })) || [],
           // Дополнительные данные из species если нужно
           color: speciesData.color?.name || FALLBACK_COLOR,
           flavor_text_entries: speciesData.flavor_text_entries || []
         };
-
-        console.log(speciesData)
 
         setPokemon(combinedData);
         setSpecies(speciesData);
@@ -62,6 +63,7 @@ const PokemonDetails = () => {
         setError(err.message || 'Failed to load Pokémon data');
       } finally {
         setIsLoading(false);
+        toggleLoader(false);
       }
     };
 
@@ -119,10 +121,10 @@ const PokemonDetails = () => {
   // URL изображения с fallback
   const imgUrl = pokemon.sprite || 
                `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
-
-console.log(pokemon);
-
+  
   return (
+    <>
+    <LoaderComponent />
     <div className="page" style={{
       background: `linear-gradient(135deg, ${mainColor} 0%, ${lightenColor(mainColor, 30)} 100%)`
     }}>
@@ -228,6 +230,7 @@ console.log(pokemon);
         </div>
       </div>
     </div>
+    </>
   );
 };
 

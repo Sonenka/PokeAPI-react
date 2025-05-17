@@ -1,11 +1,10 @@
 import React from 'react';
-// import './styles/loader.css';
 
 const Loader = () => {
   return (
-    <div className="loader">
-      <div className="loader__spinner"></div>
-      <div className="loader__text">Loading...</div>
+    <div className="loader-container">
+      <div className="o-pokeball u-tada"></div>
+      <p className="loader-text">Pokémons are coming...</p>
     </div>
   );
 };

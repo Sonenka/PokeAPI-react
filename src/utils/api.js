@@ -11,6 +11,7 @@ const fetchWithRetry = async (url, retries = 3, delay = 1000) => {
       await new Promise(res => setTimeout(res, delay));
     }
   }
+
 };
 
 export const fetchPokemonList = async () => {
@@ -52,21 +53,46 @@ export const fetchPokemonTypes = async () => {
 export const fetchPokemonDetails = async (id) => {
   try {
     const data = await fetchWithRetry(`${POKEAPI_BASE}/pokemon/${id}`);
+    console.log('Raw abilities data:', data.abilities); // Первый лог
+    
+    // Безопасная обработка способностей
+    const processedAbilities = (data.abilities || []).map(ability => {
+      // Проверяем всю цепочку вложенности
+      const abilityName = ability?.ability?.name;
+      console.log('2 Processing ability:', ability); // Второй лог
+      
+      if (!abilityName) {
+        console.warn('Invalid ability structure:', ability);
+        return {
+          name: 'unknown-ability',
+          is_hidden: ability?.is_hidden || false,
+          _debug: ability
+        };
+      }
+
+      return {
+        name: abilityName,
+        is_hidden: ability.is_hidden || false,
+        _original: ability
+      };
+    });
+
+    console.log('3 Processed abilities:', processedAbilities); // Третий лог
+    
     return {
       id: data.id,
       name: data.name,
-      types: data.types.map(t => t.type.name),
-      height: data.height,
-      weight: data.weight,
-      sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${id}.png`,
-      stats: data.stats.map(stat => ({
-        name: stat.stat.name,
-        value: stat.base_stat
-      })),
-      abilities: data.abilities.map(ability => ({
-        name: ability.ability.name,
-        is_hidden: ability.is_hidden
-      }))
+      types: data.types?.map(t => t?.type?.name) || [],
+      height: data.height || 0,
+      weight: data.weight || 0,
+      sprite: data.sprites?.other?.home?.front_default || 
+             `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${id}.png`,
+      stats: data.stats?.map(stat => ({
+        name: stat?.stat?.name || 'unknown-stat',
+        value: stat?.base_stat || 0
+      })) || [],
+      abilities: processedAbilities,
+      _originalData: data // Сохраняем оригинальные данные для отладки
     };
   } catch (error) {
     console.error(`Error fetching details for pokemon ${id}:`, error);
@@ -77,7 +103,6 @@ export const fetchPokemonDetails = async (id) => {
 export const fetchPokemonSpeciesData = async (id) => {
   try {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}/`);
-    console.log(response);
     return await response.json();
   } catch (error) {
     console.error(`Failed to fetch Pokemon species data for ID ${id}:`, error);

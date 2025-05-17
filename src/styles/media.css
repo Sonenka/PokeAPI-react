@@ -1,0 +1,246 @@
+@media (max-width: 1440px) {
+    .list-wrapper {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+    }
+
+    .body {
+        height: auto;
+        overflow-y: auto;
+    }
+
+    .main {
+        overflow-y: scroll;
+        flex: none;
+        display: flex;
+        flex-direction: column;
+        height: auto;
+    }
+}
+
+@media (max-width: 1024px) {
+    .list-wrapper {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+    }
+
+    .search {
+        gap: 20px;
+        padding: 15px 20px;
+    }
+
+    .pagination__input input {
+        font-size: 14px;
+    }
+
+    .pagination__button {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+
+    .pagination__counter {
+        font-size: 14px;
+    }
+
+    .search-container {
+        width: 100%;
+    }
+
+    .dropdown__container {
+        width: 100%;
+    }
+
+    .pagination__input {
+        gap: 10px;
+    }
+
+    .pagination__middle {
+        gap: 10px;
+    }
+
+    .pagination__buttons {
+        gap: 10px;
+    }
+
+    body {
+        min-height: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    main {
+    height: auto;
+    flex: none;
+    }
+
+
+
+    .pagination {
+        position: static;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .search {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        padding: 15px;
+        flex-direction: column;
+        height: auto;
+    }
+
+    .dropdown {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .dropdown__container {
+        width: 50%;
+    }
+
+    .dropdown__select {
+        width: 100%;
+    }
+
+    .list-wrapper {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+    }
+
+    .card__types {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .card__type {
+        width: 100%;
+        height: auto;
+        font-size: 15px;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .pagination {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        height: auto;
+    }
+
+    .pagination__buttons-mobile {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .pagination__button {
+        font-size: 12px;
+        width: 23%;
+    }
+
+    .pagination__buttons-left,
+    .pagination__buttons-right {
+        display: none;
+    }
+
+    .pagination__input {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    } 
+
+    .pagination__button--go {
+        width: 100%;
+    }
+
+    .pagination__input input {
+        width: 100%;
+    }
+
+}
+
+@media (max-width: 480px) {
+    .search {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .list-wrapper {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .card__name {
+        font-size: 18px;
+    }
+
+    .card__types {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .card__type {
+        width: 100%;
+        height: auto;
+        font-size: 14px;
+    }
+
+    .pagination {
+        gap: 10px;
+        padding: 10px;
+        margin-top: 0;
+    }
+
+    .pagination__buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .pagination {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        height: auto;
+    }
+
+    .pagination__buttons-mobile {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .pagination__button {
+        font-size: 12px;
+        width: 23%;
+    }
+
+    .pagination__buttons-left,
+    .pagination__buttons-right {
+        display: none;
+    }
+
+    .pagination__input {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    } 
+
+    .pagination__button--go {
+        width: 100%;
+    }
+
+    .pagination__input input {
+        width: 100%;
+    }
+}

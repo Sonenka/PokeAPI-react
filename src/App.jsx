@@ -13,7 +13,9 @@ import './styles/header.css';
 import './styles/card.css';
 import './styles/index.css';
 import './styles/pagination.css';
-// import './styles/details.css';
+import './styles/details.css';
+import './styles/media.css';
+import './styles/loader.css';
 
 const POKEMONS_PER_PAGE = 12;
 const MAX_POKEMONS = 2000;
