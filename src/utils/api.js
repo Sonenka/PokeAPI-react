@@ -53,13 +53,11 @@ export const fetchPokemonTypes = async () => {
 export const fetchPokemonDetails = async (id) => {
   try {
     const data = await fetchWithRetry(`${POKEAPI_BASE}/pokemon/${id}`);
-    console.log('Raw abilities data:', data.abilities); // Первый лог
     
     // Безопасная обработка способностей
     const processedAbilities = (data.abilities || []).map(ability => {
       // Проверяем всю цепочку вложенности
       const abilityName = ability?.ability?.name;
-      console.log('2 Processing ability:', ability); // Второй лог
       
       if (!abilityName) {
         console.warn('Invalid ability structure:', ability);
@@ -76,8 +74,6 @@ export const fetchPokemonDetails = async (id) => {
         _original: ability
       };
     });
-
-    console.log('3 Processed abilities:', processedAbilities); // Третий лог
     
     return {
       id: data.id,

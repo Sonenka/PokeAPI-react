@@ -1,10 +1,8 @@
-import SearchBar from './SearchBar';
 import TypeFilter from './TypeFilter';
 import SortControl from './SortControl';
+import SearchBar from './SearchBar';
 
 function Header({
-  searchValue,
-  onSearchChange,
   types,
   selectedType,
   onTypeChange,
@@ -13,13 +11,7 @@ function Header({
 }) {
   return (
     <header className="search">
-      <div className="search-container">
-        <SearchBar 
-          value={searchValue} 
-          onChange={onSearchChange} 
-        />
-      </div>
-      
+      <SearchBar /> {/* Поиск теперь управляется через контекст */}
       
       <TypeFilter
         types={types}
@@ -31,7 +23,6 @@ function Header({
         sortOrder={sortOrder}
         onChange={onSortChange}
       />
-      
     </header>
   );
 }

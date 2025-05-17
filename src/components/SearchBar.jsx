@@ -1,7 +1,7 @@
-function SearchBar({ value, onChange }) {
-  const handleClear = () => {
-    onChange(''); // Очищаем значение поиска
-  };
+import { useSearch } from '../contexts/SearchContext';
+
+function SearchBar() {
+  const { searchTerm, setSearchTerm, clearSearch } = useSearch();
 
   return (
     <div className="search-container">
@@ -9,13 +9,15 @@ function SearchBar({ value, onChange }) {
         className="search__input"
         type="text"
         placeholder="Search Pokémon..."
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
       />
-      {value && ( // Показываем крестик только если есть текст
+      {searchTerm && (
         <span 
           className="search__clear" 
-          onClick={handleClear}
+          onClick={clearSearch}
+          role="button"
+          aria-label="Clear search"
         >
           &#10006;
         </span>

@@ -40,5 +40,6 @@ body {
     gap: 20px;
     padding: 20px 40px;
     min-height: 100%;
+    height: calc(100vh - 160px);
 }
 
