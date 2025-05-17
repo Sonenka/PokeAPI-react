@@ -56,7 +56,7 @@ export const fetchPokemonDetails = async (id) => {
       id: data.id,
       name: data.name,
       types: data.types.map(t => t.type.name),
-      sprite: data.sprites.other['official-artwork'].front_default,
+      sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${id}.png`,
       stats: data.stats.map(stat => ({
         name: stat.stat.name,
         value: stat.base_stat

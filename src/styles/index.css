@@ -16,6 +16,12 @@ body {
     flex-direction: column;
     font-family: 'Nunito', sans-serif;
     background-color: #eef4ff;
+    overflow: hidden;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    height: 100%;
 }
   
 .search,
@@ -33,6 +39,6 @@ body {
     grid-template-rows: repeat(2, 1fr);
     gap: 20px;
     padding: 20px 40px;
-    /* height: 100%; */
+    min-height: 100%;
 }
 

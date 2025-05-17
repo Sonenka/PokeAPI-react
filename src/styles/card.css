@@ -37,6 +37,7 @@
     background-repeat: no-repeat;
     background-position: center;
     position: relative;
+    min-height: 180px;
 }
 
 .card:hover .card__img {

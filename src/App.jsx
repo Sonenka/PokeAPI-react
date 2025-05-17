@@ -28,6 +28,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [loadedImages, setLoadedImages] = useState(0);
+  const [typeFilterReady, setTypeFilterReady] = useState(false);
 
   useEffect(() => {
     const initApp = async () => {
@@ -35,18 +36,33 @@ const App = () => {
         setIsLoading(true);
         setError(null);
         
-        // Загружаем только покемонов с ID ≤ 2000
-        const [filteredPokemons, allTypes] = await Promise.all([
-          fetchPokemonList(), // Убрали параметр limit, так как теперь фильтрация внутри функции
-          fetchPokemonTypes()
-        ]);
+        // Загружаем первые 2000 покемонов
+        const allPokemons = await fetchPokemonList();
+        const allTypes = await fetchPokemonTypes();
         
-        setPokemons(filteredPokemons);
+        // Загружаем детали для всех покемонов (пачками)
+        const pokemonDetails = {};
+        const batchSize = 50;
+        
+        for (let i = 0; i < allPokemons.length; i += batchSize) {
+          const batch = allPokemons.slice(i, i + batchSize);
+          const details = await Promise.all(
+            batch.map(p => fetchPokemonDetails(p.id))
+          );
+          
+          details.forEach(detail => {
+            if (detail) pokemonDetails[detail.id] = detail;
+          });
+        }
+        
+        setPokemons(allPokemons);
+        setPokemonDetails(pokemonDetails);
         setTypes(allTypes);
-        setFilteredPokemons(filteredPokemons);
+        setFilteredPokemons(allPokemons);
+        setTypeFilterReady(true);
         
-        // Загружаем детали для первой страницы
-        await loadPokemonDetails(filteredPokemons.slice(0, POKEMONS_PER_PAGE));
+        // Отображаем первую страницу
+        setCurrentPagePokemons(allPokemons.slice(0, POKEMONS_PER_PAGE));
       } catch (err) {
         console.error("Error initializing app:", err);
         setError({
@@ -102,19 +118,27 @@ const App = () => {
   };
 
   useEffect(() => {
-    applyFilters();
-  }, [pokemons, search, selectedType, sortOrder]);
+    if (typeFilterReady) {
+      applyFilters();
+    }
+  }, [pokemons, search, selectedType, sortOrder, typeFilterReady]);
 
   const applyFilters = () => {
-    let filteredList = [...pokemons]; // Работаем только с первыми 2000 покемонами
-
-    // Поиск по имени
+    let filteredList = [...pokemons];
+  
+    // Поиск по имени или ID
     if (search) {
-      filteredList = filteredList.filter(p =>
-        p.name.toLowerCase().includes(search.toLowerCase())
-      );
+      const searchTerm = search.toLowerCase().trim();
+      const searchAsNumber = parseInt(searchTerm);
+      const isNumericSearch = !isNaN(searchAsNumber);
+      
+      filteredList = filteredList.filter(p => {
+        const nameMatch = p.name.toLowerCase().includes(searchTerm);
+        const idMatch = isNumericSearch && p.id === searchAsNumber;
+        return nameMatch || idMatch;
+      });
     }
-
+  
     // Фильтрация по типу
     if (selectedType) {
       filteredList = filteredList.filter(p => {
@@ -122,7 +146,7 @@ const App = () => {
         return details?.types?.includes(selectedType);
       });
     }
-
+  
     // Сортировка
     filteredList.sort((a, b) => {
       switch (sortOrder) {
@@ -133,16 +157,12 @@ const App = () => {
         default: return a.id - b.id;
       }
     });
-
+  
     setFilteredPokemons(filteredList);
     setCurrentPage(1);
     
-    // Загружаем детали для первой страницы
-    if (filteredList.length > 0) {
-      loadPokemonDetails(filteredList.slice(0, POKEMONS_PER_PAGE));
-    } else {
-      setCurrentPagePokemons([]);
-    }
+    // Обновляем отображаемые покемоны
+    setCurrentPagePokemons(filteredList.slice(0, POKEMONS_PER_PAGE));
   };
 
   const handlePageChange = async (page) => {
