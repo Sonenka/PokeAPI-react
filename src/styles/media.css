@@ -16,6 +16,10 @@
         flex-direction: column;
         height: auto;
     }
+
+    .card {
+        min-height: 350px;
+    }
 }
 
 @media (max-width: 1024px) {
@@ -166,6 +170,9 @@
         width: 100%;
     }
 
+    .card {
+        min-height: 420px;
+    }
 }
 
 @media (max-width: 480px) {

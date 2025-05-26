@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
     gap: 15px;
 
     background-color: var(--white);
@@ -18,7 +19,6 @@
     transition: all 0.3s ease;
 
     width: 100%;
-    min-height: 290px;
 }
 
 .card:hover {
