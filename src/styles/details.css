@@ -48,11 +48,12 @@
     transition: all 0.3s;
     display: flex;
     align-items: center;
+    font-size: 36px;
 }
 
-.details__back-img {
+/* .details__back-img {
     height: 36px;
-}
+} */
 
 .details__back-button:hover {
     filter: brightness(1.1);

@@ -131,7 +131,7 @@ const PokemonDetails = () => {
       <div className="details">
         <div className="details__header">
           <button className="details__back-button" onClick={() => navigate(-1)}>
-            <img className="details__back-img" src="../src/assets/img/backArrow.svg" alt="" />
+            &#8592;
           </button>
           <h1 className="details__title darker">
             {(pokemon.name || '').charAt(0).toUpperCase() + (pokemon.name || '').slice(1)}
